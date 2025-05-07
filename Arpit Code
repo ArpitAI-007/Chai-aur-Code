@@ -1,0 +1,71 @@
+import pandas as pd
+import numpy as np
+import matplotlib.pyplot as plt
+import seaborn as sns
+
+df = pd.read_csv('/content/student-dataset.csv')
+
+print(df.head())
+print(df.columns)
+print(df.dtypes)
+print(df.isnull().sum())
+
+subjects = ['english.grade', 'math.grade', 'sciences.grade', 'language.grade']
+avg_marks = df[subjects].mean()
+print(avg_marks)
+
+max_marks = df[subjects].max()
+min_marks = df[subjects].min()
+print(max_marks)
+print(min_marks)
+
+low_scores = df[
+    (df['english.grade'] < 2) |
+    (df['math.grade'] < 2) |
+    (df['sciences.grade'] < 2) |
+    (df['language.grade'] < 2)
+]
+print(low_scores)
+
+df['total_marks'] = df[subjects].sum(axis=1)
+highest_scorers = df[df['total_marks'] == df['total_marks'].max()]
+print(highest_scorers)
+
+df['average_marks'] = df[subjects].mean(axis=1)
+
+for subject in subjects:
+    plt.figure()
+    df[subject].hist(bins=10, color='skyblue', edgecolor='black')
+    plt.title(f"{subject} Histogram")
+    plt.xlabel("Marks")
+    plt.ylabel("Number of Students")
+    plt.grid(False)
+    plt.tight_layout()
+
+plt.figure()
+avg_marks.plot(kind='bar', color='orange')
+plt.title("Average Marks by Subject")
+plt.ylabel("Average Marks")
+plt.grid(axis='y')
+plt.tight_layout()
+
+plt.figure()
+plt.scatter(df['math.grade'], df['sciences.grade'], alpha=0.6)
+plt.title("Math vs Science Grades")
+plt.xlabel("Math Grade")
+plt.ylabel("Science Grade")
+plt.grid(True)
+plt.tight_layout()
+
+plt.figure()
+sns.boxplot(data=df[subjects])
+plt.title("Grade Distributions per Subject")
+plt.ylabel("Grades")
+plt.tight_layout()
+
+for subject in subjects:
+    mean_val = np.mean(df[subject])
+    std_val = np.std(df[subject])
+    print(f"{subject} -> Mean: {mean_val:.2f}, Std Dev: {std_val:.2f}")
+
+plt.show()
